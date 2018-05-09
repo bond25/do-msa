@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tns:domainObject name="TelegramTravelAssistant" xmlns:tns="http://das.fbk.eu/DomainObject"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns2="http://das.fbk.eu/DataType"
+	xsi:schemaLocation="http://das.fbk.eu/DomainObject ../schema/DomainObject.xsd ">
+	<tns:domainKnowledge>
+		<tns:internalDomainProperty name="properties/TravelAssistant" />
+		<tns:externalDomainProperty name="properties/GlobalPlanner" />
+		<tns:externalDomainProperty name="properties/LocalPlanner" />
+		<tns:externalDomainProperty name="properties/DataViewer" />
+	</tns:domainKnowledge>
+	<tns:state>
+		<tns:stateVariable name="From" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="To" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="Date" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="DepartureTime" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="TransportType" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="RouteType" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="PlannerOutput" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="ChosenPlan" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="SegmentsNumber" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+		<tns:stateVariable name="HOAAPlanGoal" type="string">
+			<tns2:content type="anyType"></tns2:content>
+		</tns:stateVariable>
+	</tns:state>
+	<tns:process name="process/PROC_TelegramTravelAssistant" />
+	<tns:fragment name="fragments/TA_planAssistant" />
+	<tns:fragment name="fragments/TA_refineLeg" />
+</tns:domainObject>
+
