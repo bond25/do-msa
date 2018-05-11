@@ -116,6 +116,11 @@ public class ProcessEngineImpl implements ProcessEngine {
         return domainObjectDefinition.getDomainObject().getName();
     }
 
+    public void createDeployment() {
+        DomainObjectModel dom = repositoryService.createDoModel(domainObjectDefinition);
+        repositoryService.createDeployment(dom, this.deploymentId);
+    }
+
     public void deploy(String path) {
         this.domainObjectDefinition = deployService.deploy();
         this.delegateHandlers =  getDelegateHandlers(domainObjectDefinition, String.format("%s.handlers", path));

@@ -65,7 +65,7 @@ public class AbstractActivityHandler extends AbstractHandler {
                     .setDeploymentId(pe.getDeploymentId())
                     .setCorrelationId(pe.getDoi(proc).getId())
                     .setPayload(ap);
-            pe.getMessageService().send(m);
+            //pe.getMessageService().send(m);
             pe.addToWaitingList(proc);
         }
     }

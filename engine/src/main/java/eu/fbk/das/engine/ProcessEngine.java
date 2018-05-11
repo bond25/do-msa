@@ -40,4 +40,6 @@ public interface ProcessEngine {
 
     boolean canHandleInstance(String correlationId);
 
+    public void createDeployment();
+
 }

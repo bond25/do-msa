@@ -58,6 +58,12 @@ public class MessageListener {
                 processEngine.startInstanceByCorrelationId(UUID.randomUUID().toString());
             }
         }
+        if (command[0].equals("deploy")) {
+            int num = Integer.parseInt(command[1]);
+            for (int i = 0; i < num; i++) {
+                processEngine.createDeployment();
+            }
+        }
         LOG.debug("Command {} executed", messageJson);
     }
 }
