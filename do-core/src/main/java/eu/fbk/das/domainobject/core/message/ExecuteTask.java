@@ -4,11 +4,20 @@ import eu.fbk.das.domainobject.core.entity.activity.ProcessActivity;
 
 public class ExecuteTask {
 
+    private String deploymentId;
     private String fragmentName;
     private ProcessActivity activity;
 
     public ExecuteTask() {
 
+    }
+
+    public void setDeploymentId(String deploymentId) {
+        this.deploymentId = deploymentId;
+    }
+
+    public String getDeploymentId() {
+        return this.deploymentId;
     }
 
     public void setFragmentName(String fragmentName) {

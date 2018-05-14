@@ -12,6 +12,7 @@ import eu.fbk.das.domainobject.core.persistence.execution.DomainObjectEntity;
 import eu.fbk.das.domainobject.core.persistence.execution.DomainPropertyEntity;
 import eu.fbk.das.domainobject.core.persistence.execution.ProcessEntity;
 import eu.fbk.das.domainobject.core.repository.*;
+import org.neo4j.driver.internal.InternalRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -74,8 +76,28 @@ public class RepositoryService {
     }
 
     @Transactional
-    public String findEvent(String state) {
-        return domRepo.findEvent(state);
+    public List<DomainPropertyEntity> getDomainPropertyInstance(Long domId, String correlationId, String dpName) {
+        return runtimeRepo.getDomainPropertyInstance(domId, correlationId, dpName);
+    }
+
+    @Transactional
+    public List<StateEntity> findInitialStates(Long domId, String dpName) {
+        return domRepo.findInitialStates(domId, dpName);
+    }
+
+    @Transactional
+    public List<StateEntity> findDomainPropertyPath(Long[] initStates, String finalState) {
+        return domRepo.findDomainPropertyPath(initStates, finalState);
+    }
+
+    @Transactional
+    public List<FragmentActionModel> findFragmentActionFlow(String fragmentName, String event) {
+        return fragmentRepo.findFragmentActionFlow(fragmentName, event);
+    }
+
+    @Transactional
+    public String findEvent(Long domId, String finalState) {
+        return domRepo.findEvent(domId, finalState);
     }
 
     @Transactional
@@ -84,13 +106,13 @@ public class RepositoryService {
     }
 
     @Transactional
-    public List<FragmentModel> findRelevantFragments(String dodName, String event, String dpName) {
-        return fragmentRepo.findRelevantFragments(dodName, event, dpName);
+    public List<FragmentModel> findRelevantFragments(Long domId, String event, String dpName) {
+        return fragmentRepo.findRelevantFragments(domId, event, dpName);
     }
 
     @Transactional
-    public List<FragmentActionModel> findActionFlowByFragmentName(String name) {
-        return fragmentRepo.findActionFlowByFragmentName(name);
+    public List<FragmentActionModel> findActionFlowByFragmentName(Long id) {
+        return fragmentRepo.findActionFlowByFragmentId(id);
     }
 
     @Transactional

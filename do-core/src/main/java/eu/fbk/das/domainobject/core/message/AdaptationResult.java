@@ -4,6 +4,8 @@ import eu.fbk.das.domainobject.core.entity.ProcessDiagram;
 
 public class AdaptationResult {
 
+    String correlationId;
+
     ProcessDiagram refinement;
 
     String doDefName;
@@ -19,6 +21,15 @@ public class AdaptationResult {
     public AdaptationResult(String doDefName, String dpName) {
         this.doDefName = doDefName;
         this.dpName = dpName;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public AdaptationResult setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+        return this;
     }
 
     public String getDoDefName() {

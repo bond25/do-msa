@@ -21,9 +21,9 @@ public class Message<T> {
         this.payload = payload;
     }
 
-    public Message(String sender, String deploymentId, T payload) {
-        this.sender = sender;
+    public Message(String deploymentId, String correlationId, T payload) {
         this.deploymentId = deploymentId;
+        this.correlationId = correlationId;
         this.payload = payload;
     }
 

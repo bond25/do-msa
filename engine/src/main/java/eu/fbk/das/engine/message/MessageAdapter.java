@@ -1,4 +1,4 @@
-package eu.fbk.das.engine;
+package eu.fbk.das.engine.message;
 
 
 import org.springframework.cloud.stream.annotation.Output;

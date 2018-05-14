@@ -1,4 +1,4 @@
-package eu.fbk.das.engine.handlers;
+package eu.fbk.das.engine.impl.handlers;
 
 import eu.fbk.das.engine.ProcessEngine;
 import eu.fbk.das.domainobject.core.entity.ProcessDiagram;
@@ -16,11 +16,11 @@ public class ConcreteActivityHandler extends AbstractHandler {
     public void handle(ProcessEngine pe, ProcessDiagram proc, ProcessActivity current) {
         boolean prec = handlePrecondition(pe, proc, current);
         if (!prec) {
-            LOG.debug("[" + proc.getpid()
+            LOG.debug("[" + proc.getCorrelationId()
                     + "] Precondition not satisfied");
             return;
         }
-        LOG.debug("[" + proc.getpid() + "] Try to execute ConcreteActivity");
+        LOG.debug("[" + proc.getCorrelationId() + "] Try to execute ConcreteActivity");
         ConcreteActivity concrete = (ConcreteActivity) current;
         if (pe.getDelegateHandler(concrete.getName()) != null) {
             LOG.debug("Using executable handler for concrete activity: "

@@ -1,4 +1,4 @@
-package eu.fbk.das.engine;
+package eu.fbk.das.engine.impl;
 
 import eu.fbk.das.domainobject.core.entity.DomainObjectDefinition;
 import eu.fbk.das.domainobject.core.entity.jaxb.DomainObject;
@@ -6,6 +6,7 @@ import eu.fbk.das.domainobject.core.entity.jaxb.DomainProperty;
 import eu.fbk.das.domainobject.core.entity.jaxb.Fragment;
 import eu.fbk.das.domainobject.core.entity.jaxb.Process;
 import eu.fbk.das.domainobject.core.parser.Parser;
+import eu.fbk.das.engine.ProcessEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -18,12 +19,18 @@ import java.util.stream.Collectors;
 
 public class DeployService {
 
+    ProcessEngine engine;
+
     private static final Logger LOG = LoggerFactory.getLogger(DeployService.class);
+
+    public DeployService(ProcessEngine engine) {
+        this.engine = engine;
+    }
 
     public DomainObjectDefinition deploy() {
         DomainObject domainObject = getDeploymentDomainObject();
         DomainObjectDefinition dod = deployDomainObject(domainObject);
-        LOG.debug("Domain Object Definition for deployment {}", dod);
+        LOG.debug("Domain Object model for deployment {}", dod);
         return dod;
     }
 

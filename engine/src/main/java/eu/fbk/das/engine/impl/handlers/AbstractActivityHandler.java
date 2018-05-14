@@ -1,4 +1,4 @@
-package eu.fbk.das.engine.handlers;
+package eu.fbk.das.engine.impl.handlers;
 
 import eu.fbk.das.engine.DelegateExecution;
 import eu.fbk.das.engine.ProcessEngine;
@@ -15,17 +15,15 @@ public class AbstractActivityHandler extends AbstractHandler {
     private static String HOAA = "HOAA";
     private static Logger LOG = LoggerFactory.getLogger(AbstractActivityHandler.class);
 
-    //TODO: need messaging service to send message for composer microservice
-    //TODO: standard name for messages(refineAbstract, adaptationProblemRefined, paymentRetrieved etc)
     public void handle(ProcessEngine pe, ProcessDiagram proc, ProcessActivity current) {
         AbstractActivity currentAbstract = (AbstractActivity) current;
         boolean prec = handlePrecondition(pe, proc, currentAbstract);
         if (!prec) {
-            LOG.debug("[" + proc.getpid()
+            LOG.debug("[" + proc.getCorrelationId()
                     + "] Precondition not satisfied");
             return;
         }
-        LOG.debug("[" + proc.getpid() + "] Abstract Activity - "
+        LOG.debug("[" + proc.getCorrelationId() + "] Abstract Activity - "
                 + currentAbstract.getName());
         if (currentAbstract.getAbstractType() != null
                 && currentAbstract.getAbstractType().equals(HOAA)) {
@@ -40,7 +38,6 @@ public class AbstractActivityHandler extends AbstractHandler {
             }
             currentAbstract.setExecuted(true);
         } else {
-            String id = null;
 //            if (currentAbstract.getProblem() != null
 //                    && currentAbstract.getProblem().getProblemId() != null) {
 //                id = currentAbstract.getProblem().getProblemId();
@@ -59,14 +56,8 @@ public class AbstractActivityHandler extends AbstractHandler {
 //                }
 //
 //            }
-            AdaptationProblem ap = new AdaptationProblem(((AbstractActivity) current).getGoal());
-            Message<AdaptationProblem> m = new Message<AdaptationProblem>();
-            m.setSender(pe.getDomainObjectName())
-                    .setDeploymentId(pe.getDeploymentId())
-                    .setCorrelationId(pe.getDoi(proc).getId())
-                    .setPayload(ap);
-            //pe.getMessageService().send(m);
-            pe.addToWaitingList(proc);
+            pe.suspendProcess(proc);
+            pe.handleAbstractActivity(proc, currentAbstract);
         }
     }
 

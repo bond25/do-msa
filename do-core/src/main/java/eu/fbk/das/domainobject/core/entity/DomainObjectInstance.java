@@ -23,7 +23,6 @@ public class DomainObjectInstance {
     private Integer pickupPoint;
     private String routes;
 
-
     public void setProcess(ProcessDiagram process) {
         this.process = process;
     }

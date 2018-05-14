@@ -1,6 +1,8 @@
 package eu.fbk.das.domainobject.core.entity.activity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class InvokeActivty extends ProcessActivity {
 
     public InvokeActivty() {
@@ -19,6 +21,7 @@ public class InvokeActivty extends ProcessActivity {
 
     }
 
+    @JsonIgnore
     @Override
     public InvokeActivty getCopyOfActivity() {
         return new InvokeActivty(this.name);

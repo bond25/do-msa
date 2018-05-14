@@ -1,5 +1,9 @@
 package eu.fbk.das.domainobject.core.entity.activity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import eu.fbk.das.domainobject.core.entity.jaxb.activity.EffectType;
 import eu.fbk.das.domainobject.core.entity.jaxb.activity.PreconditionType;
 
@@ -10,6 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.NONE)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = AbstractActivity.class, name = "AbstractActivity"),
+        @JsonSubTypes.Type(value = ConcreteActivity.class, name = "ConcreteActivity"),
+        @JsonSubTypes.Type(value = InvokeActivty.class, name = "InvokeActivty"),
+        @JsonSubTypes.Type(value = ReplyActivity.class, name = "ReplyActivity")}
+)
 public class ProcessActivity {
 
     @XmlElement(name = "name")
@@ -184,6 +196,7 @@ public class ProcessActivity {
         this.target = target;
     }
 
+    @JsonIgnore
     public ProcessActivity getCopyOfActivity() {
         return new ProcessActivity(this.name);
     }

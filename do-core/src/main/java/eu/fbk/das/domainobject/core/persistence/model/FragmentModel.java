@@ -1,6 +1,7 @@
 package eu.fbk.das.domainobject.core.persistence.model;
 
 
+import eu.fbk.das.domainobject.core.entity.jaxb.Fragment;
 import eu.fbk.das.domainobject.core.persistence.StateEntity;
 import org.neo4j.ogm.annotation.*;
 
@@ -47,4 +48,11 @@ public class FragmentModel {
         return title;
     }
 
+    public List<StateEntity> getStates() {
+        return states;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

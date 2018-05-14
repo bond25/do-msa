@@ -1,5 +1,6 @@
 package eu.fbk.das.domainobject.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.fbk.das.domainobject.core.entity.activity.*;
 import eu.fbk.das.domainobject.core.exceptions.FlowDuplicateActivityException;
 import eu.fbk.das.domainobject.core.exceptions.InvalidFlowActivityException;
@@ -25,14 +26,17 @@ public class ProcessDiagram {
      * Identifier of a process instance
      */
     @XmlTransient
-    private int pid;
+    private String correlationId;
     @XmlAttribute
     private String name;
     @XmlTransient
+    @JsonIgnore
     private Set<Integer> states;
     @XmlTransient
+    @JsonIgnore
     private int initialState;
     @XmlTransient
+    @JsonIgnore
     private Set<Integer> finalStates;
     @XmlTransient
     private boolean isRunning = false;
@@ -109,6 +113,7 @@ public class ProcessDiagram {
     }
 
     @XmlTransient
+    @JsonIgnore
     private int currentState;
 
     private ProcessActivity currentActivity;
@@ -120,10 +125,10 @@ public class ProcessDiagram {
         }
     }
 
-    public ProcessDiagram(int pid, Set<Integer> states, int initialState,
+    public ProcessDiagram(String correlationId, Set<Integer> states, int initialState,
                           List<ProcessActivity> all) throws InvalidFlowInitialStateException,
             InvalidFlowActivityException, FlowDuplicateActivityException {
-        this.pid = pid;
+        this.correlationId = correlationId;
 
         for (int i = 0; i < all.size(); i++) {
             states.add(i);
@@ -171,13 +176,13 @@ public class ProcessDiagram {
     }
 
     public ProcessDiagram(String string, List<ProcessActivity> all,
-                          Set<Integer> states, int procId)
+                          Set<Integer> states, String procId)
             throws InvalidFlowInitialStateException,
             InvalidFlowActivityException {
         this.states = new HashSet<Integer>(states);
 
         this.activities = new ArrayList<ProcessActivity>(all);
-        this.pid = procId;
+        this.correlationId = procId;
 
         for (ProcessActivity act : all) {
 
@@ -204,8 +209,8 @@ public class ProcessDiagram {
         states.add(i);
     }
 
-    public int getpid() {
-        return pid;
+    public String getCorrelationId() {
+        return correlationId;
     }
 
     public ProcessActivity getCurrentActivity() {
@@ -329,7 +334,7 @@ public class ProcessDiagram {
     @Override
     public String toString() {
         String str = "";
-        str += "pid:" + pid + "\n";
+        str += "correlationId:" + correlationId + "\n";
         str += "states:" + states + "\n";
         str += "initial state:" + initialState + "\n";
         str += "current state:" + currentState + "\n";
@@ -387,7 +392,7 @@ public class ProcessDiagram {
 
     public static ProcessDiagram AdaptationToFlowModel(
             List<ServiceTransitionGlobal> adaptationProcess,
-            String initialState, int pid, List<String> abstracts,
+            String initialState, String correlationId, List<String> abstracts,
             List<String> concretes) throws InvalidFlowInitialStateException,
             InvalidFlowActivityException {
 
@@ -395,16 +400,16 @@ public class ProcessDiagram {
         int order = 0;
         List<ProcessActivity> actList = new ArrayList<ProcessActivity>();
         constructSequenceFromState(initialState, adaptationProcess, actList,
-                order, states, pid, abstracts, concretes);
+                order, states, correlationId, abstracts, concretes);
         ProcessDiagram model = new ProcessDiagram("refinement", actList,
-                states, pid);
+                states, correlationId);
         return model;
     }
 
     private static void constructSequenceFromState(String pointer,
                                                    List<ServiceTransitionGlobal> adaptationProcess,
                                                    List<ProcessActivity> actList, int order, Set<Integer> states,
-                                                   int pid, List<String> abstracts, List<String> concretes) {
+                                                   String pid, List<String> abstracts, List<String> concretes) {
 
         List<ServiceTransitionGlobal> currentTransitions = getTransitionsFromState(
                 pointer, adaptationProcess);
@@ -599,11 +604,8 @@ public class ProcessDiagram {
 
     }
 
-    public void setPid(int pid) {
-        if (pid == 34) {
-            System.out.println();
-        }
-        this.pid = pid;
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 
     public void setActivities(List<ProcessActivity> activities) {

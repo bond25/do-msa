@@ -15,14 +15,11 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Parser {
 
-    private static final int DEFAULT_PID = 1;
+    private static final String DEFAULT_PID = UUID.randomUUID().toString();
 
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
@@ -246,7 +243,6 @@ public class Parser {
                 act.setPrecondition(processActivity.getPrecondition());
                 result.add(act);
             }
-            //TODO: Default pid, why?
             if (isSwitchType(processActivity)) {
                 ProcessActivity act = parseSwitchActivity(processActivity,
                         a, states, DEFAULT_PID);
@@ -354,7 +350,7 @@ public class Parser {
     }
 
     public static ProcessActivity parseSwitchActivity(java.lang.Object object,
-                                                      int sourcest, Set<Integer> states, int ProcessID)
+                                                      int sourcest, Set<Integer> states, String ProcessID)
             throws InvalidFlowInitialStateException,
             InvalidFlowActivityException, FlowDuplicateActivityException {
 
@@ -462,7 +458,7 @@ public class Parser {
     }
 
     public static ProcessActivity parsePickActivity(java.lang.Object object,
-                                                    int sourcest, Set<Integer> states, int ProcessID)
+                                                    int sourcest, Set<Integer> states, String ProcessID)
             throws InvalidFlowInitialStateException,
             InvalidFlowActivityException, FlowDuplicateActivityException {
         List<OnMessageActivity> OnMsgs = new ArrayList<OnMessageActivity>();
@@ -581,7 +577,7 @@ public class Parser {
     }
 
     private static ProcessActivity parseWhileActivity(ActivityType processActivity,
-                                                      int sourcest, Set<Integer> states, int ProcessID)
+                                                      int sourcest, Set<Integer> states, String ProcessID)
             throws InvalidFlowInitialStateException,
             InvalidFlowActivityException, FlowDuplicateActivityException {
         WhileType wa = (WhileType) processActivity;
@@ -642,7 +638,7 @@ public class Parser {
         return result;
     }
 
-    private static ProcessActivity parseScopeActivity(ActivityType processActivity, int sourcest, Set<Integer> states, int ProcessID)
+    private static ProcessActivity parseScopeActivity(ActivityType processActivity, int sourcest, Set<Integer> states, String ProcessID)
             throws InvalidFlowInitialStateException,
             InvalidFlowActivityException, FlowDuplicateActivityException {
         ScopeType sa = (ScopeType) processActivity;

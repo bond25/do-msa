@@ -1,6 +1,8 @@
 package eu.fbk.das.composer.impl;
 
 import eu.fbk.das.composer.Composer;
+import eu.fbk.das.composer.CompositionStrategy;
+import eu.fbk.das.composer.FragmentSelectionStrategy;
 import eu.fbk.das.composer.message.MessageService;
 import eu.fbk.das.domainobject.core.entity.ProcessDiagram;
 import eu.fbk.das.domainobject.core.entity.activity.*;
@@ -9,11 +11,8 @@ import eu.fbk.das.domainobject.core.entity.jaxb.activity.ClauseType;
 import eu.fbk.das.domainobject.core.entity.jaxb.activity.EffectType;
 import eu.fbk.das.domainobject.core.entity.jaxb.activity.PreconditionType;
 import eu.fbk.das.domainobject.core.message.AdaptationProblem;
-import eu.fbk.das.domainobject.core.message.Message;
-import eu.fbk.das.domainobject.core.persistence.execution.DomainObjectEntity;
 import eu.fbk.das.domainobject.core.persistence.model.DomainObjectModel;
 import eu.fbk.das.domainobject.core.persistence.model.FragmentActionModel;
-import eu.fbk.das.domainobject.core.persistence.model.FragmentModel;
 import eu.fbk.das.domainobject.core.service.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
@@ -35,31 +33,22 @@ public class ComposerImpl implements Composer {
 
     private static final String WSYNTH_PATH = "/opt/local/bin/wsynth.exe";
 
+    private ConcurrentHashMap<String, CompositionStrategy> strategies = new ConcurrentHashMap<>();
+
+    public ComposerImpl() {
+        strategies.put("fragmentSelection", new FragmentSelectionStrategy(this));
+    }
+
     @Autowired
     MessageService messageService;
 
     @Autowired
     RepositoryService repositoryService;
 
-    public ProcessDiagram submitProblem(AdaptationProblem ap, String correlationId) {
-        //find relevant do with goal relation
-        List<DomainObjectModel> dods = findDomainObjectDefinitionWithGoalRelation(ap);
-        if (dods == null) {
-            return null;
-        }
-        ProcessDiagram result = null;
-        if (dods.size() == 1) {
-            String[] doNames = {dods.get(0).getName()};
-            //get runtime data
-            List<DomainObjectEntity> dois = repositoryService.getRuntimeData(doNames, correlationId);
-            //build composition problem or any adaptation mechanism
-            String state = ap.getGoal().getPoint().get(0).getDomainProperty().get(0).getState().get(0);
-            //find fragment and convert it to Process Diagram
-            String event = repositoryService.findEvent(state);
-            List<FragmentModel> fragments = repositoryService.findRelevantFragments(dods.get(0).getName(), event, ap.getGoal().getPoint().get(0).getDomainProperty().get(0).getDpName());
-            result = convertToProcessDiagram(fragments.get(0).getName());
-        }
-        return result;
+    public ProcessDiagram submitProblem(AdaptationProblem ap) {
+        //choose strategy
+        CompositionStrategy strategy = getCompositionStrategy("fragmentSelection");
+        return strategy.compose(ap);
     }
 
     public List<DomainObjectModel> findDomainObjectDefinitionWithGoalRelation(AdaptationProblem ap) {
@@ -74,8 +63,8 @@ public class ComposerImpl implements Composer {
         return dods;
     }
 
-    public ProcessDiagram convertToProcessDiagram(String name) {
-        List<FragmentActionModel> actions = repositoryService.findActionFlowByFragmentName(name);
+    public ProcessDiagram convertToProcessDiagram(Long fragId) {
+        List<FragmentActionModel> actions = repositoryService.findActionFlowByFragmentName(fragId);
         List<ProcessActivity> pacts = new ArrayList<>();
         actions.forEach(a -> {
             FragmentActionModel fa = repositoryService.findFragmentActionById(a.getId());
@@ -185,6 +174,15 @@ public class ComposerImpl implements Composer {
         });
         ProcessDiagram pd = new ProcessDiagram(pacts);
         return pd;
+    }
+
+    public CompositionStrategy getCompositionStrategy(String type) {
+        return strategies.get(type);
+    }
+
+    @Override
+    public RepositoryService getRepositoryService() {
+        return repositoryService;
     }
 
 }

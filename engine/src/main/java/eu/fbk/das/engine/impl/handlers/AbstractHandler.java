@@ -1,4 +1,4 @@
-package eu.fbk.das.engine.handlers;
+package eu.fbk.das.engine.impl.handlers;
 
 import eu.fbk.das.engine.Handler;
 import eu.fbk.das.engine.ProcessEngine;
@@ -26,7 +26,7 @@ public abstract class AbstractHandler implements Handler {
                              ProcessActivity current) {
         if (current.getEffect() != null
                 && current.getEffect().getEvent() != null) {
-            LOG.debug("[" + proc.getpid() + "] applicazione effetti");
+            LOG.debug("[" + proc.getCorrelationId() + "] applicazione effetti");
             pe.applyEffect(proc, current.getEffect());
         }
     }

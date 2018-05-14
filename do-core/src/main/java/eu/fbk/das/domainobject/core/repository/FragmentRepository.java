@@ -11,9 +11,15 @@ public interface FragmentRepository extends Neo4jRepository<FragmentModel, Long>
 
     FragmentModel findByTitle(String title);
 
-    @Query("MATCH (:FragmentModel {name: {0}})-[START_ACTION]->(:FragmentActionModel)-[NEXT_ACTION *0..]->(a:FragmentActionModel) return a")
-    List<FragmentActionModel> findActionFlowByFragmentName(String name);
+    @Query("match (f:FragmentModel)-[:START_ACTIVITY]-(sAct:FragmentActionModel)-[:NEXT_ACTION *0..]-(fAct:FragmentActionModel)-[:EFFECT]-(e:EffectEntity)\n" +
+            "where f.name = {0} and e.event = {1} \n" +
+            "with sAct, fAct\n" +
+            "match path=shortestPath((:FragmentActionModel {name: sAct.name})-[:NEXT_ACTION *0..]-(:FragmentActionModel {name: fAct.name})) return path")
+    List<FragmentActionModel> findFragmentActionFlow(String fragmentName, String event);
 
-    @Query("MATCH (:DomainObjectModel {name: {0}})-[:FRAGMENT]->(f:FragmentModel)-[:START_ACTIVITY]->(:FragmentActionModel)-[:NEXT_ACTION *0..]->(act:FragmentActionModel)-[:EFFECT]->(:EffectEntity {event: {1}, domainPropertyName: {2}}) return f")
-    List<FragmentModel> findRelevantFragments(String dodName, String event, String dpName);
+    @Query("MATCH (f:FragmentModel)-[START_ACTION]->(:FragmentActionModel)-[NEXT_ACTION *0..]->(a:FragmentActionModel) where ID(f) = {0} return a")
+    List<FragmentActionModel> findActionFlowByFragmentId(Long id);
+
+    @Query("MATCH (dom:DomainObjectModel)-[:FRAGMENT]->(f:FragmentModel)-[:START_ACTIVITY]->(:FragmentActionModel)-[:NEXT_ACTION *0..]->(act:FragmentActionModel)-[:EFFECT]->(:EffectEntity {event: {1}, domainPropertyName: {2}}) where ID(dom) = {0} return f")
+    List<FragmentModel> findRelevantFragments(Long domId, String event, String dpName);
 }

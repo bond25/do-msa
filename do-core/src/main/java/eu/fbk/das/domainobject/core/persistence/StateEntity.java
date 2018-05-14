@@ -22,6 +22,10 @@ public class StateEntity {
 
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public StateEntity(String name) {
         this.title = name;
     }

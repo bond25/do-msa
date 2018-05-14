@@ -1,9 +1,11 @@
-package eu.fbk.das.engine;
+package eu.fbk.das.engine.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.fbk.das.domainobject.core.message.AdaptationProblem;
 import eu.fbk.das.domainobject.core.message.Message;
 import eu.fbk.das.domainobject.core.message.TaskExecuted;
+import eu.fbk.das.engine.message.MessageAdapter;
+import eu.fbk.das.engine.message.MessagePublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.integration.support.MessageBuilder;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableBinding(MessageAdapter.class)
-public class MessageService {
+public class MessagePublisherImpl implements MessagePublisher {
 
     @Autowired
     MessageChannel execution;

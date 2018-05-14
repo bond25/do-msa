@@ -1,6 +1,5 @@
-package eu.fbk.das.engine.handlers;
+package eu.fbk.das.engine.impl.handlers;
 
-import eu.fbk.das.domainobject.core.message.Message;
 import eu.fbk.das.engine.ProcessEngine;
 import eu.fbk.das.domainobject.core.entity.ProcessDiagram;
 import eu.fbk.das.domainobject.core.entity.activity.ProcessActivity;

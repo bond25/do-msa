@@ -36,12 +36,10 @@ public class MessageListener {
     public void handleAdaptationProblem(String messageJson) throws IOException {
         Message<AdaptationProblem> m = new ObjectMapper().readValue(messageJson, new TypeReference<Message<AdaptationProblem>>(){});
         long startTime = System.currentTimeMillis();
-        ProcessDiagram result = composer.submitProblem(m.getPayload(), m.getCorrelationId());
+        ProcessDiagram result = composer.submitProblem(m.getPayload());
         long endTime = System.currentTimeMillis();
         LOG.info("Handle AP {} in {} ms", m.getId(), (endTime - startTime));
-        if (result != null) {
-            messageService.sendAdaptationResult(new Message<AdaptationResult>("Composer", m.getDeploymentId(), new AdaptationResult(result)));
-        }
+        messageService.sendAdaptationResult(new Message<AdaptationResult>(m.getDeploymentId(), m.getCorrelationId(), new AdaptationResult(result).setCorrelationId(m.getCorrelationId())));
     }
 
 }
