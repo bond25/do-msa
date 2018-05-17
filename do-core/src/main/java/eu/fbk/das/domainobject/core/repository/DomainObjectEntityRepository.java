@@ -15,4 +15,10 @@ public interface DomainObjectEntityRepository extends Neo4jRepository<DomainObje
     @Query("match (dom:DomainObjectModel)-[:MODEL]-(:DeploymentEntity)-[:DEPLOYMENT]-(doi:DomainObjectEntity)-[:PROPERTY]-(dp:DomainPropertyEntity) where ID(dom)={0} and doi.correlationId = {1} and dp.name = {2} return dp")
     List<DomainPropertyEntity> getDomainPropertyInstance(Long domId, String correlationId, String dpName);
 
+    @Query("MATCH (doe:DomainObjectEntity)-[:PROPERTY]->(dp:DomainPropertyEntity)\n" +
+            "WHERE doe.correlationId = {0}\n" +
+            "AND dp.name = {1}\n" +
+            "RETURN dp.currentState")
+    String getRuntimeState(String correlationId, String domainProperty);
+
 }

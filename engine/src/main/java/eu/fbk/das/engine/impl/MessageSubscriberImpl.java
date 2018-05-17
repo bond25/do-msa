@@ -43,7 +43,12 @@ public class MessageSubscriberImpl implements MessageSubscriber {
         Message<AdaptationResult> m = new ObjectMapper().readValue(messageJson, new TypeReference<Message<AdaptationResult>>(){});
         if (engine.canHandle(m.getDeploymentId())) {
             LOG.debug("Handle AdaptationResult {}", messageJson);
-            engine.injectAdaptationResult(m.getPayload());
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //engine.injectAdaptationResult(m.getPayload());
         }
     }
 

@@ -63,8 +63,7 @@ public class ComposerImpl implements Composer {
         return dods;
     }
 
-    public ProcessDiagram convertToProcessDiagram(Long fragId) {
-        List<FragmentActionModel> actions = repositoryService.findActionFlowByFragmentName(fragId);
+    public ProcessDiagram convertToProcessDiagram(List<FragmentActionModel> actions) {
         List<ProcessActivity> pacts = new ArrayList<>();
         actions.forEach(a -> {
             FragmentActionModel fa = repositoryService.findFragmentActionById(a.getId());

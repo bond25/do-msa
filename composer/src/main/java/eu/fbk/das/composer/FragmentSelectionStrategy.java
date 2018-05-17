@@ -5,6 +5,7 @@ import eu.fbk.das.domainobject.core.message.AdaptationProblem;
 import eu.fbk.das.domainobject.core.persistence.StateEntity;
 import eu.fbk.das.domainobject.core.persistence.execution.DomainPropertyEntity;
 import eu.fbk.das.domainobject.core.persistence.model.DomainObjectModel;
+import eu.fbk.das.domainobject.core.persistence.model.FragmentActionModel;
 import eu.fbk.das.domainobject.core.persistence.model.FragmentModel;
 
 import java.util.List;
@@ -18,8 +19,18 @@ public class FragmentSelectionStrategy implements CompositionStrategy {
         this.composerCtx = composerCtx;
     }
 
-    public ProcessDiagram compose(String dpName, String state) {
-        List<DomainObjectModel> doms = composerCtx.getRepositoryService().findRelevantDoModels(dpName);
+    public ProcessDiagram compose(String domainProperty, String finalState) {
+        //runtime data
+        String initState = composerCtx.getRepositoryService().getRuntimeState("none", domainProperty);
+
+        List<DomainObjectModel> doms = null;
+
+        if (finalState.equals("LEG_REFINED")) {
+            doms = composerCtx.getRepositoryService().findRelevantDomFromState(domainProperty, finalState, "JOURNEY_PLANNED");
+        } else {
+            doms = composerCtx.getRepositoryService().findRelevantDomFromInitState(domainProperty, finalState);
+        }
+
         if (doms.isEmpty()) {
             return null;
         }
@@ -32,29 +43,20 @@ public class FragmentSelectionStrategy implements CompositionStrategy {
         } else {
             dom = doms.get(0);
         }
-        //runtime data
-        List<DomainPropertyEntity> dps = composerCtx.getRepositoryService().getDomainPropertyInstance(dom.getId(), "c6702b13-73bc-4fe2-9d09-67d33923bbc0", dpName);
-        List<StateEntity> initStates = composerCtx.getRepositoryService().findInitialStates(dom.getId(), dpName);
-        Long[] states = new Long[initStates.size()];
-        initStates.forEach(s -> states[states.length - 1] = s.getId());
-        List<StateEntity> statesPath = composerCtx.getRepositoryService().findDomainPropertyPath(states, state);
-        if (statesPath != null) {
-            String event = composerCtx.getRepositoryService().findEvent(dom.getId(), statesPath.get(statesPath.size() - 1).getName());
-            List<FragmentModel> fragments = composerCtx.getRepositoryService().findRelevantFragments(dom.getId(), event, dpName);
-            if (fragments != null) {
-                return composerCtx.convertToProcessDiagram(fragments.get(0).getId());
-            }
-        }
-        return null;
+        List<FragmentActionModel> activities = composerCtx.getRepositoryService().findFragmentActionFlow(dom.getId(), domainProperty, finalState);
+        return composerCtx.convertToProcessDiagram(activities);
     }
 
 
     @Override
     public ProcessDiagram compose(AdaptationProblem ap) {
-        String dpName = ap.getGoal().getPoint().get(0).getDomainProperty().get(0).getDpName();
-        String state = ap.getGoal().getPoint().get(0).getDomainProperty().get(0).getState().get(0);
+        String domainProperty = ap.getGoal().getPoint().get(0).getDomainProperty().get(0).getDpName();
+        String finalState = ap.getGoal().getPoint().get(0).getDomainProperty().get(0).getState().get(0);
 
-        List<DomainObjectModel> doms = composerCtx.getRepositoryService().findRelevantDoModels(dpName);
+        //runtime data
+        String initState = composerCtx.getRepositoryService().getRuntimeState("none", domainProperty);
+
+        List<DomainObjectModel> doms = composerCtx.getRepositoryService().findRelevantDomFromInitState(domainProperty, finalState);
         if (doms.isEmpty()) {
             return null;
         }
@@ -67,20 +69,8 @@ public class FragmentSelectionStrategy implements CompositionStrategy {
         } else {
             dom = doms.get(0);
         }
-        //runtime data
-        List<DomainPropertyEntity> dps = composerCtx.getRepositoryService().getDomainPropertyInstance(dom.getId(), "c6702b13-73bc-4fe2-9d09-67d33923bbc0", dpName);
-        List<StateEntity> initStates = composerCtx.getRepositoryService().findInitialStates(dom.getId(), dpName);
-        Long[] states = new Long[initStates.size()];
-        initStates.forEach(s -> states[states.length - 1] = s.getId());
-        List<StateEntity> statesPath = composerCtx.getRepositoryService().findDomainPropertyPath(states, state);
-        if (statesPath != null) {
-            String event = composerCtx.getRepositoryService().findEvent(dom.getId(), statesPath.get(statesPath.size() - 1).getName());
-            List<FragmentModel> fragments = composerCtx.getRepositoryService().findRelevantFragments(dom.getId(), event, dpName);
-            if (fragments != null) {
-                return composerCtx.convertToProcessDiagram(fragments.get(0).getId());
-            }
-        }
-        return null;
+        List<FragmentActionModel> activities = composerCtx.getRepositoryService().findFragmentActionFlow(dom.getId(), domainProperty, finalState);
+        return composerCtx.convertToProcessDiagram(activities);
     }
 
 }

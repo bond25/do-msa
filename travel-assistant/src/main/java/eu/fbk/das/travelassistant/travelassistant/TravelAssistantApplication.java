@@ -1,5 +1,10 @@
 package eu.fbk.das.travelassistant.travelassistant;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.fbk.das.domainobject.core.entity.jaxb.GoalType;
+import eu.fbk.das.domainobject.core.entity.jaxb.activity.ClauseType;
+import eu.fbk.das.domainobject.core.message.AdaptationProblem;
+import eu.fbk.das.domainobject.core.message.Message;
 import eu.fbk.das.engine.ProcessEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +16,12 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
+import org.springframework.integration.annotation.InboundChannelAdapter;
+import org.springframework.integration.annotation.Poller;
+import org.springframework.integration.core.MessageSource;
+import org.springframework.integration.support.MessageBuilder;
+
+import java.util.Random;
 
 
 @SpringBootApplication
@@ -39,4 +50,129 @@ public class TravelAssistantApplication {
 //        }
 	    return new String("start");
     }
+
+    @Bean
+    @InboundChannelAdapter(value = "adaptation", poller = @Poller(fixedRate = "100"))
+    public MessageSource<String> sendAdaptationProblems() {
+        return () -> {
+            String[] GOAL = {"TravelAssistant", "LEG_REFINED"};
+            ClauseType.Point.DomainProperty dp = new ClauseType.Point.DomainProperty();
+            dp.setDpName(GOAL[0]);
+            dp.getState().add(GOAL[1]);
+            ClauseType.Point point = new ClauseType.Point();
+            point.getDomainProperty().add(dp);
+            GoalType goal = new GoalType();
+            goal.getPoint().add(point);
+
+            AdaptationProblem ap = new AdaptationProblem(goal);
+
+            int cid  = new Random().ints(0, ids.length).findFirst().getAsInt();
+
+            Message<AdaptationProblem> m = new Message<>();
+            m.setDeploymentId(engine.getDeploymentId())
+                    .setCorrelationId(ids[cid])
+                    .setPayload(ap);
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonMessage = mapper.writeValueAsString(m);
+                return MessageBuilder.withPayload(jsonMessage).setHeader("eventType", "AdaptationProblem").build();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not tranform and send message due to: " + e.getMessage(), e);
+            }
+        };
+    }
+
+    @Bean
+    @InboundChannelAdapter(value = "adaptation", poller = @Poller(fixedRate = "250"))
+    public MessageSource<String> sendAdaptationProblems2() {
+        return () -> {
+            String[] GOAL = {"GlobalPlanner", "ALTERNATIVES_SENT"};
+            ClauseType.Point.DomainProperty dp = new ClauseType.Point.DomainProperty();
+            dp.setDpName(GOAL[0]);
+            dp.getState().add(GOAL[1]);
+            ClauseType.Point point = new ClauseType.Point();
+            point.getDomainProperty().add(dp);
+            GoalType goal = new GoalType();
+            goal.getPoint().add(point);
+
+            AdaptationProblem ap = new AdaptationProblem(goal);
+
+            int cid  = new Random().ints(0, ids.length).findFirst().getAsInt();
+
+            Message<AdaptationProblem> m = new Message<>();
+            m.setDeploymentId(engine.getDeploymentId())
+                    .setCorrelationId(ids[cid])
+                    .setPayload(ap);
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonMessage = mapper.writeValueAsString(m);
+                return MessageBuilder.withPayload(jsonMessage).setHeader("eventType", "AdaptationProblem").build();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not tranform and send message due to: " + e.getMessage(), e);
+            }
+        };
+    }
+
+    @Bean
+    @InboundChannelAdapter(value = "adaptation", poller = @Poller(fixedRate = "250"))
+    public MessageSource<String> sendAdaptationProblems3() {
+        return () -> {
+            String[] GOAL = {"LocalPlanner", "LOCAL_ALTERNATIVES_SENT"};
+            ClauseType.Point.DomainProperty dp = new ClauseType.Point.DomainProperty();
+            dp.setDpName(GOAL[0]);
+            dp.getState().add(GOAL[1]);
+            ClauseType.Point point = new ClauseType.Point();
+            point.getDomainProperty().add(dp);
+            GoalType goal = new GoalType();
+            goal.getPoint().add(point);
+
+            AdaptationProblem ap = new AdaptationProblem(goal);
+
+            int cid  = new Random().ints(0, ids.length).findFirst().getAsInt();
+
+            Message<AdaptationProblem> m = new Message<>();
+            m.setDeploymentId(engine.getDeploymentId())
+                    .setCorrelationId(ids[cid])
+                    .setPayload(ap);
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonMessage = mapper.writeValueAsString(m);
+                return MessageBuilder.withPayload(jsonMessage).setHeader("eventType", "AdaptationProblem").build();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not tranform and send message due to: " + e.getMessage(), e);
+            }
+        };
+    }
+
+    @Bean
+    @InboundChannelAdapter(value = "adaptation", poller = @Poller(fixedRate = "100"))
+    public MessageSource<String> sendAdaptationProblems4() {
+        return () -> {
+            String[] GOAL = {"DataViewer", "VIEWER_PATTERN_DEFINED"};
+            ClauseType.Point.DomainProperty dp = new ClauseType.Point.DomainProperty();
+            dp.setDpName(GOAL[0]);
+            dp.getState().add(GOAL[1]);
+            ClauseType.Point point = new ClauseType.Point();
+            point.getDomainProperty().add(dp);
+            GoalType goal = new GoalType();
+            goal.getPoint().add(point);
+
+            AdaptationProblem ap = new AdaptationProblem(goal);
+
+            int cid  = new Random().ints(0, ids.length).findFirst().getAsInt();
+
+            Message<AdaptationProblem> m = new Message<>();
+            m.setDeploymentId(engine.getDeploymentId())
+                    .setCorrelationId(ids[cid])
+                    .setPayload(ap);
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonMessage = mapper.writeValueAsString(m);
+                return MessageBuilder.withPayload(jsonMessage).setHeader("eventType", "AdaptationProblem").build();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not tranform and send message due to: " + e.getMessage(), e);
+            }
+        };
+    }
+
 }

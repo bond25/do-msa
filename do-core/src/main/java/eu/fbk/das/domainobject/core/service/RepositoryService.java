@@ -54,6 +54,23 @@ public class RepositoryService {
     @Autowired
     DomainObjectEntityRepository runtimeRepo;
 
+
+    @Transactional
+    public String getRuntimeState(String correlationId, String domainProperty) {
+        return runtimeRepo.getRuntimeState(correlationId, domainProperty);
+    }
+
+    @Transactional
+    public List<DomainObjectModel> findRelevantDomFromInitState(String domainProperty, String finalState) {
+        return domRepo.findRelevantDomFromInitState(domainProperty, finalState);
+    }
+
+    @Transactional
+    public List<DomainObjectModel> findRelevantDomFromState(String domainProperty, String finalState, String initState) {
+        return domRepo.findRelevantDomFromState(domainProperty, finalState, initState);
+    }
+
+
     @Transactional
     public List<DomainObjectEntity> getRuntimeData(String[] doNames, String correlationId) {
         return runtimeRepo.findAllByCorrelationId(doNames, correlationId);
@@ -91,8 +108,8 @@ public class RepositoryService {
     }
 
     @Transactional
-    public List<FragmentActionModel> findFragmentActionFlow(String fragmentName, String event) {
-        return fragmentRepo.findFragmentActionFlow(fragmentName, event);
+    public List<FragmentActionModel> findFragmentActionFlow(Long domId, String domainProperty, String finalState) {
+        return fragmentRepo.findFragmentActionFlow(domId, domainProperty, finalState);
     }
 
     @Transactional

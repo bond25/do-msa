@@ -39,7 +39,7 @@ public class MessageListener {
         ProcessDiagram result = composer.submitProblem(m.getPayload());
         long endTime = System.currentTimeMillis();
         LOG.info("Handle AP {} in {} ms", m.getId(), (endTime - startTime));
-        messageService.sendAdaptationResult(new Message<AdaptationResult>(m.getDeploymentId(), m.getCorrelationId(), new AdaptationResult(result).setCorrelationId(m.getCorrelationId())));
+        //messageService.sendAdaptationResult(new Message<AdaptationResult>(m.getDeploymentId(), m.getCorrelationId(), new AdaptationResult(result).setCorrelationId(m.getCorrelationId())));
     }
 
 }

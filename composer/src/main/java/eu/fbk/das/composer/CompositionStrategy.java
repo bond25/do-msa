@@ -7,5 +7,5 @@ public interface CompositionStrategy {
 
     ProcessDiagram compose(AdaptationProblem ap);
 
-    ProcessDiagram compose(String dpName, String state);
+    ProcessDiagram compose(String domainProperty, String finalState);
 }

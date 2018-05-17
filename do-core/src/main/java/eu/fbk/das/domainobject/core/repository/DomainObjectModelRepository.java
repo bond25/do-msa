@@ -2,17 +2,29 @@ package eu.fbk.das.domainobject.core.repository;
 
 import eu.fbk.das.domainobject.core.persistence.StateEntity;
 import eu.fbk.das.domainobject.core.persistence.model.DomainObjectModel;
-import org.neo4j.driver.internal.InternalRelationship;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 
-import java.util.Collection;
 import java.util.List;
 
 
 public interface DomainObjectModelRepository extends Neo4jRepository<DomainObjectModel, Long> {
 
     DomainObjectModel findByTitle(String title);
+
+    @Query("MATCH (dom:DomainObjectModel)-[:INTERNAL_PROPERTY]->(dp:DomainPropertyModel)-[:STATES]->(initState:StateEntity)-[:TRANSITION *0..]->(finalState:StateEntity)\n" +
+            "WHERE dp.name = {0} \n" +
+            "AND finalState.name = {1} \n" +
+            "AND initState.isInitial = true\n" +
+            "RETURN dom")
+    List<DomainObjectModel> findRelevantDomFromInitState(String domainProperty, String finalState);
+
+    @Query("MATCH (dom:DomainObjectModel)-[:INTERNAL_PROPERTY]->(dp:DomainPropertyModel)-[:STATES]->(initState:StateEntity)-[:TRANSITION *0..]->(finalState:StateEntity)\n" +
+            "WHERE dp.name = {0} \n" +
+            "AND finalState.name = {1} \n" +
+            "AND initState.name = {2} \n" +
+            "RETURN dom")
+    List<DomainObjectModel> findRelevantDomFromState(String domainProperty, String finalState, String initState);
 
     @Query("MATCH (dod: DomainObjectModel {deploymentId: {0}}) RETURN dod")
     DomainObjectModel findByDeploymentId(String deploymentId);
